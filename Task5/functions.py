@@ -7,7 +7,7 @@ import os
 import sys
 import vrep
 import math
-import time
+from time import sleep
 
 #######ARUCO DETECTION####################################
 
@@ -89,6 +89,17 @@ def Calculate_orientation_in_radians(Detected_ArUco_markers):
 
     #print ArUco_marker_angles
     return ArUco_marker_angles    ## returning the angles of the ArUco markers in degrees as a dictionary
+
+def getArcuoAngleRadians(ArUco_marker_angles, ArUco_id_no):
+    radians = ArUco_marker_angles.get(ArUco_id_no)
+    degrees = int(math.degrees(math.atan2(dy,dx)))
+        if(degrees < 0):
+            degrees += 360
+    return degrees
+
+def getArcuoAngleDegrees(ArUco_marker_angles, ArUco_id_no):
+    radians = ArUco_marker_angles.get(ArUco_id_no)
+    return radians
 
 def Find_coordinates(Detected_ArUco_markers, ArUco_id_no):
 
@@ -196,16 +207,18 @@ def createROI():
     yscale = 0
 
     cap = cv2.VideoCapture(1)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     print "Processing Video for ROI..."
     while ((not xscale) and (not yscale)):
         try:
             ret, img = cap.read()
-            # cv2.namedWindow('frame',0)
+            cv2.namedWindow('frame',0)
             cv2.imshow('frame',img)
-            # cv2.resizeWindow('frame',500,300)
+            cv2.resizeWindow('frame',500,300)
             Detected_ArUco_markers = detect_ArUco(img)
             ArUco_marker_angles = Calculate_orientation_in_radians(Detected_ArUco_markers)
-            print Detected_ArUco_markers
+            # print Detected_ArUco_markers
             # Upper Left coordinates
             ULxcentre, ULycentre = Find_coordinates(Detected_ArUco_markers, 10)
             # Bottom Right coordinates
@@ -225,10 +238,19 @@ def createROI():
             if cv2.waitKey(1) & 0xFF == ord('Q'):
                 break
         except:
-            pass
+            print ("Bad Frame : Processing ROI")
+            if cv2.waitKey(1) & 0xFF == ord('Q'):
+                break
     cap.release()
-    return xscale, yscale
+    return xscale, yscale, ULxcentre, ULycentre
 ######## openCV functions ############################################
+
+
+def getDistance(Detected_ArUco_markers, id1, id2):
+    x1, y1 = Find_coordinates(ArUco_marker_angles, id1)
+    x2, y2 = Find_coordinates(ArUco_marker_angles, id2)
+    dist = math.sqrt(math.pow(x2-x1,2)+math.pow(y2-y1,2))
+    return dist
 
 # INITIALISATION
 '''
@@ -270,41 +292,7 @@ returnCode,disc_handle5=vrep.simxGetObjectHandle(clientID,'Disc5',vrep.simx_opmo
 '''
 #returnCode,dummy_goal=vrep.simxGetObjectHandle(clientID,'DummyGoal',vrep.simx_opmode_oneshot_wait )
 
-
-xscale, yscale = createROI()
-
 # fruit detection
-cap = cv2.VideoCapture(1)
-print "Processing Video"
-while (True):
-    try:
-        ret, img = cap.read()
-        cv2.namedWindow('frame',0)
-        cv2.imshow('frame',img)
-        cv2.resizeWindow('frame',500,300)
-        
-        if cv2.waitKey(1) & 0xFF == ord('Q'):
-            break
-        
-        Detected_ArUco_markers = detect_ArUco(img)
-        ArUco_marker_angles = Calculate_orientation_in_radians(Detected_ArUco_markers)
-
-        # cb coordinates
-        Txcentre, Tycentre = Find_coordinates(Detected_ArUco_markers, 1)
-        # get orientation of cb
-        cbAngle = ArUco_marker_angles.get(1)
-        print ("Recognised cb State: (x,y): (" + str(Txcentre) + "," + str(Tycentre) + "); " + str(cbAngle) + " degrees")
-
-        # calculate scaled value
-        # shift of origin is used wrt coordinates in V-Rep emulation
-        cbScaledParams = [((Txcentre - ULxcentre)*xscale) - 2, -(((Tycentre - ULycentre)*yscale) - 1.5), cbAngle]
-        # print cbScaledParams
-
-        # send scaled coordinates
-        retCode, retInts, retFloats, retStrings, retBuffer = vrep.simxCallScriptFunction(clientID,'LuaFunctions',vrep.sim_scripttype_childscript, 'transformcb', [], cbScaledParams, [], emptyBuff, vrep.simx_opmode_blocking)
-    except:
-        print "Bad Frame"
-cap.release()
 
 # Stop
 #vrep.simxStopSimulation(clientID,vrep.simx_opmode_oneshot)
