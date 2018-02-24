@@ -1,5 +1,5 @@
 from functions import *
-import pyserial
+import serial
 
 PORT = "/dev/ttyACM0"
 BAUDRATE = 115200
@@ -137,6 +137,10 @@ DFruit_handles=[DFruit_handle1,DFruit_handle2,DFruit_handle3,DFruit_handle4]
 
 
 cap = cv2.VideoCapture(1)
+if not cap.isOpened():
+    pass
+cap.set(cv2.CAP_PROP_FRAME_WIDTH,1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT,720)
 print "Capturing Markers"
 try:
         ret, img = cap.read()
@@ -157,7 +161,7 @@ for id in Detected_ArUco_markers:
     if id in [6,7,8,9]:
         print("Detected " + str(id))
         retCode, retInts, retFloats, retStrings, retBuffer = vrep.simxCallScriptFunction(clientID,'LuaFunctions',vrep.sim_scripttype_childscript, 'transformFruit', [DFruit_handles.pop()], [2.0,2.0,0], [], emptyBuff, vrep.simx_opmode_blocking)
-
+cap.close()
 
 
 # serial console initialisation
