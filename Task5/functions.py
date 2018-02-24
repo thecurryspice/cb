@@ -195,6 +195,8 @@ def travel(goal):
     returnCode=vrep.simxSetJointTargetVelocity(clientID,leftjoint_handle,0,vrep.simx_opmode_oneshot_wait)
     time.sleep(0.1)
 
+def 
+
 ######## V-Rep functions #############################################
 
 
@@ -253,46 +255,5 @@ def getDistance(Detected_ArUco_markers, id1, id2):
     return dist
 
 # INITIALISATION
-'''
-vrep.simxFinish(-1)
-
-clientID=vrep.simxStart('127.0.0.1',19997,True,True,5000,5)
-
-if clientID!=-1:
-    print "connected to remote api server"
-else:
-    print 'connection not successful'
-    sys.exit("could not connect")
-
-returnCode = vrep.simxStartSimulation(clientID,vrep.simx_opmode_oneshot)
-
-returnCode,cb_handle=vrep.simxGetObjectHandle(clientID,'cb',vrep.simx_opmode_oneshot_wait)
-returnCode,leftjoint_handle=vrep.simxGetObjectHandle(clientID,'cb_left_joint',vrep.simx_opmode_oneshot_wait)
-returnCode,rightjoint_handle=vrep.simxGetObjectHandle(clientID,'cb_right_joint',vrep.simx_opmode_oneshot_wait)
-returnCode,start_dummy_handle = vrep.simxGetObjectHandle(clientID,'Start',vrep.simx_opmode_oneshot_wait)
-returnCode,goal_dummy_handle = vrep.simxGetObjectHandle(clientID,'Goal',vrep.simx_opmode_oneshot_wait)
-returnCode,script_dummy_handle = vrep.simxGetObjectHandle(clientID,'LuaFunctions',vrep.simx_opmode_oneshot_wait)
-
-returnCode,cylinder_handle1=vrep.simxGetObjectHandle(clientID,'Cylinder1',vrep.simx_opmode_oneshot_wait )
-returnCode,cylinder_handle2=vrep.simxGetObjectHandle(clientID,'Cylinder2',vrep.simx_opmode_oneshot_wait )
-returnCode,cylinder_handle3=vrep.simxGetObjectHandle(clientID,'Cylinder3',vrep.simx_opmode_oneshot_wait )
-returnCode,cylinder_handle4=vrep.simxGetObjectHandle(clientID,'Cylinder4',vrep.simx_opmode_oneshot_wait )
-
 
 #####################################################################################################################
-
-# Write your code here
-
-
-returnCode,disc_handle1=vrep.simxGetObjectHandle(clientID,'Disc1',vrep.simx_opmode_oneshot_wait )
-returnCode,disc_handle2=vrep.simxGetObjectHandle(clientID,'Disc2',vrep.simx_opmode_oneshot_wait )
-returnCode,disc_handle3=vrep.simxGetObjectHandle(clientID,'Disc3',vrep.simx_opmode_oneshot_wait )
-returnCode,disc_handle4=vrep.simxGetObjectHandle(clientID,'Disc4',vrep.simx_opmode_oneshot_wait )
-returnCode,disc_handle5=vrep.simxGetObjectHandle(clientID,'Disc5',vrep.simx_opmode_oneshot_wait )
-'''
-#returnCode,dummy_goal=vrep.simxGetObjectHandle(clientID,'DummyGoal',vrep.simx_opmode_oneshot_wait )
-
-# fruit detection
-
-# Stop
-#vrep.simxStopSimulation(clientID,vrep.simx_opmode_oneshot)
